@@ -1,5 +1,5 @@
 services:
-    laravel.test:
+    laravel:
         build:
             context: './vendor/laravel/sail/runtimes/8.3'
             dockerfile: Dockerfile
@@ -19,14 +19,21 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            - './docker/entrypoint.sh:/entrypoint.sh' # Mount the custom entrypoint
+        entrypoint: [ "/entrypoint.sh" ]  # Use the custom entrypoint script
         networks:
             - sail
         depends_on:
-            - mysql
-            - redis
-            - meilisearch
-            - mailpit
-            - selenium
+            mysql:
+                condition: service_healthy  # Wait for MySQL health check to pass
+            redis:
+                condition: service_started
+            meilisearch:
+                condition: service_started
+            mailpit:
+                condition: service_started
+            selenium:
+                condition: service_started
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -45,12 +52,12 @@ services:
             - sail
         healthcheck:
             test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-p${DB_PASSWORD}'
-            retries: 3
+                - CMD-SHELL
+                - 'mysqladmin ping -h 127.0.0.1 -p${DB_PASSWORD}'
+            retries: 10
+            interval: 10s
             timeout: 5s
+            start_period: 30s
     redis:
         image: 'redis:alpine'
         ports:
