@@ -4,6 +4,7 @@ namespace Tests\Unit\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Enums\RoleEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,6 +22,26 @@ class PostControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Posts');
+    }
+
+    public function test_create_returns_view()
+    {
+        $this->actingAs(User::factory()->create());
+
+        $response = $this->get(route('posts.create'));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_show_displays_post()
+    {
+        $this->actingAs(User::factory()->create());
+        $post = Post::factory()->create();
+
+        $response = $this->get(route('posts.show', $post));
+
+        $response->assertStatus(200);
+        $response->assertSee($post->title);
     }
 
     public function test_store_creates_new_post()
@@ -74,5 +95,40 @@ class PostControllerTest extends TestCase
         $this->assertModelMissing($post);
 
         $response->assertRedirect(route('posts.index'));
+    }
+
+    public function test_user_cannot_update_others_post()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $otherUser->id]);
+        $this->actingAs($user);
+
+        $updatedData = [
+            'title' => 'Updated Title',
+            'content' => 'Updated Content',
+        ];
+
+        $response = $this->put(route('posts.update', $post), $updatedData);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_admin_can_update_any_post()
+    {
+        $admin = User::factory()->asAdmin()->create();
+        $post = Post::factory()->create();
+        $this->actingAs($admin);
+
+        $updatedData = [
+            'title' => 'Updated by Admin',
+            'content' => 'Updated Content',
+        ];
+
+        $response = $this->put(route('posts.update', $post), $updatedData);
+
+        $post->refresh();
+        $this->assertEquals('Updated by Admin', $post->title);
+        $response->assertRedirect(route('posts.show', $post->id));
     }
 }
