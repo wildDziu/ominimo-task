@@ -12,7 +12,7 @@ fi
 # Check if APP_ENV is set to 'local'
 if [ "${APP_ENV}" = "local" ]; then
   echo "Running in local environment, starting npm in development mode..."
-  npm run dev &
+  npm run dev
 else
   echo "Running in non-local environment, building assets for production..."
   npm run build
