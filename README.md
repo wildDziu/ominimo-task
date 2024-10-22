@@ -5,12 +5,15 @@
 
 Before running the project, make sure you have the following software installed on your system:
 
-1. **Docker**: Download and install Docker from [Docker's official site](https://www.docker.com/products/docker-desktop).
+1. **Docker**: Download and install Docker
+   from [Docker's official site](https://www.docker.com/products/docker-desktop).
 2. **Docker Compose**: This typically comes bundled with Docker. You can verify its installation by running:
    ```bash
    docker-compose --version
    ```
-   If it’s not installed, follow the instructions from the [Docker Compose documentation](https://docs.docker.com/compose/install/).
+
+If it’s not installed, follow the instructions from
+the [Docker Compose documentation](https://docs.docker.com/compose/install/).
 
 ## Setup Instructions
 
@@ -24,13 +27,20 @@ Since the repository is private, you will need to download the project manually:
 
 ### 2. Navigate to the Project Directory
 
-After unpacking the archive, open a terminal and navigate to the directory where the `docker-compose.yml` file is located. For example, if you extracted the project to your `Downloads` folder, you would run the following command:
+After unpacking the archive, open a terminal and navigate to the directory where the `docker-compose.yml` file is
+located. For example, if you extracted the project to your `Downloads` folder, you would run the following command:
 
 ```bash
 cd ~/Downloads/ominimo-task
 ```
 
-### 3. Start the Docker Containers
+### 3. Set Up Environment Variables
+
+Create a copy of the example environment file:
+bashCopycp .env.example .env
+Open the .env file in your preferred text editor and configure any necessary environment variables for your setup.
+
+### 4. Start the Docker Containers
 
 Once in the project directory, you can bring up the Docker containers by running:
 
@@ -40,7 +50,7 @@ docker-compose up -d
 
 This command will start the containers in the background.
 
-### 4. Access the Project
+### 5. Access the Project
 
 After the Docker containers are up and running, you can access the project by opening your browser and navigating to:
 
@@ -62,5 +72,7 @@ http://localhost
 
 ## Conclusion
 
-You should now have the project running locally. If you encounter any issues, ensure Docker and Docker Compose are installed correctly and that the containers are running.
+You should now have the project running locally. If you encounter any issues, ensure Docker and Docker Compose are
+installed correctly and that the containers are running.
+
 ```
